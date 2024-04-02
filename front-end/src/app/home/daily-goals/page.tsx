@@ -3,12 +3,13 @@ import { Badge, Button, Modal, Select, Text, TextInput, Textarea } from '@mantin
 import { DateInput, TimeInput } from '@mantine/dates';
 import { useDisclosure } from '@mantine/hooks';
 import React, { useState } from 'react'
+import style from "./daily-goal.module.css"
 
 type HabbitType = "TimeWasters" | "Productive";
 
 export default function page() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [value, setValue] = useState<Date | null>(new Date());
+  
 
 
   let data = [{
@@ -33,7 +34,10 @@ export default function page() {
     <div>
       <div className='m-4 flex justify-between'>
         <p className='text-2xl font-semibold'>Daily Goals</p>
-        <Button variant="filled" onClick={open}>Add Habbit</Button>
+        <p>
+           <Button variant="filled" className={style.addHabbit} onClick={open}>Add Habbit</Button>
+        </p>
+      
       </div>
       <div>
         <p className='m-4 text-sm font-medium'>12-March-24</p>
@@ -58,8 +62,10 @@ export default function page() {
 
       </div>
      
-      <Modal opened={opened} onClose={close} title="Add Habbit">
-        {/* Modal content */}
+      <Modal opened={opened} onClose={close} title="Add Habbit" className='font-semibold' centered overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}>
         <TextInput
           label="Name"
           required
@@ -69,12 +75,6 @@ export default function page() {
           label=" Description"
           placeholder="Enter the description"
         />
-         {/* <DateInput
-          value={value}
-          onChange={setValue}
-          label="Date input"
-          placeholder="Date input"
-        /> */}
          <TimeInput
           label="Time"
           required
@@ -86,7 +86,7 @@ export default function page() {
           data={['Productive', 'TimeWasters']}
           required
         />
-        <Button fullWidth className='mt-2'>Add</Button>
+        <Button fullWidth  className={`mt-2 ${style.addHabbit}`}>Add</Button>
       </Modal>
 
     </div>
