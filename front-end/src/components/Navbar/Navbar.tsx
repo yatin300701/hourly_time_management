@@ -7,10 +7,8 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 import { LinksGroup } from '../LinksGroup/LinkGroup';
-// import { UserButton } from '../UserButton/UserButton';
-// import { Logo } from './Logo';
 import classes from './Navbar.module.css';
-import imgIcon from "../../../public/favicon_io/android-chrome-512x512.png"
+import imgIcon from "../../../public/favicon_io/yash-high-resolution-logo.png"
 import Image from 'next/image';
 
 const mockdata = [
@@ -37,7 +35,6 @@ export default function Navbar() {
   return (
     <nav className={classes.navbar}>
     
-
     <ScrollArea className={classes.links}>
       <div className={classes.linksInner}>{links}</div>
     </ScrollArea>

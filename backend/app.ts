@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { dailyHabbit } from './daily-habbit/routes/daily-habbit.route';
+import cors from "cors";
 
 const app = express();
 const PORT = 4000;
@@ -8,7 +9,7 @@ const PORT = 4000;
 // Middleware
 require('dotenv').config();
 
-
+app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
