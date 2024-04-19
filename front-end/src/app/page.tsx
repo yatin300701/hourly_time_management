@@ -1,9 +1,8 @@
 "use client"
-import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@mantine/core";
 import Image from "next/image";
 
-export default function Home() {
+export default function App() {
   return (
     <div>
       Hell

@@ -1,29 +1,36 @@
 import { useState } from 'react';
-import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem } from '@mantine/core';
-import { IconCalendarStats, IconChevronRight } from '@tabler/icons-react';
-import classes from './LinkGroup.module.css';
+import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem, NavLink } from '@mantine/core';
+import { IconCalendarStats, IconChevronRight, IconHome2 } from '@tabler/icons-react';
+import classes from './NavbarLinksGroup.module.css';
 
 interface LinksGroupProps {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
-  links?: { label: string; link: string,icon?:React.FC<any> }[];
+  links?: { label: string; link: string }[];
 }
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksGroupProps) {
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
   const items = (hasLinks ? links : []).map((link) => (
-    <Text<'a'>
-      component="a"
-      className={classes.link}
-      href={link.link}
-      key={link.label}
-      onClick={(event:any) => event.preventDefault()}
-    >
-        
-      {link.label}
-    </Text>
+    // <Text<'a'>
+    //   component="a"
+    //   className={classes.link}
+    //   href={link.link}
+    //   key={link.label}
+    // //   onClick={(event) => event.preventDefault()}
+    // >
+    //   {link.link}
+    // </Text>
+    <div>
+      <NavLink
+        href={link.link}
+        label={link.label}
+        leftSection={<IconHome2 size="1rem" stroke={1.5} />}
+      />
+    </div>
+
   ));
 
   return (

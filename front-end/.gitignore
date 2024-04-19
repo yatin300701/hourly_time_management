@@ -5,6 +5,7 @@ node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+.env
 
 # testing
 /coverage
@@ -12,6 +13,7 @@ node_modules
 # next.js
 /.next/
 /out/
+
 
 # production
 build

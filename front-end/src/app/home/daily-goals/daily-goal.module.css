@@ -1,6 +1,0 @@
-.addHabbit{
-    background-color: var(--mantine-color-blue-filled)
-}
-.addHabbit:hover{
-    background-color: var(--mantine-color-blue-filled-hover);
-}

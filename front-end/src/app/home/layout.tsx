@@ -1,23 +1,30 @@
-import Navbar from '@/components/Navbar/Navbar'
-import React, { Children } from 'react'
+"use client"
+import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import React, { useState } from 'react'
+import { Inter } from "next/font/google";
+import { theme } from '../../../theme';
+import Navbar from '@/components/big-components/navbar/Navbar';
+import TopBar from '@/components/big-components/TopBar/TopBar';
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function layout({
     children,
   }: Readonly<{
     children: React.ReactNode;
   }>) {
-  return (
-    <div className='flex'>
 
-      <div className='w-1/6'>
-          <Navbar/>
-      </div>  
-      <div className='w-5/6' >
-          {children}
-      </div>  
-    
-   
+    const [isSideBarOpen,setIsSideBarOpen] = useState(false);
+    const toggleSideBar = ()=>{
+      setIsSideBarOpen(!isSideBarOpen);
+    }
+  return (
+    <>
+    <TopBar toggleSideBar={toggleSideBar} />
+    <div className='flex relative'>
+    <Navbar isSideBarOpen={isSideBarOpen} toggleSideBar={toggleSideBar}/>
+    <div className='w-full h-[calc(100vh-57px)]'>{children}</div>
     </div>
+    </>
   )
-   
 }
