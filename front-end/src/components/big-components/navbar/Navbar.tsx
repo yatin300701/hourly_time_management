@@ -59,7 +59,7 @@ export default function Navbar(props:{isSideBarOpen:boolean,toggleSideBar:()=>vo
     props.toggleSideBar()
   };
   return (
-    <div className='flex flex-col h-[calc(100vh-60px)] p-y-5 justify-between w-[230px] mr-2.5 shadow-custom max-md:absolute max-md:left-[-230px] bg-white' style={{left:`${props.isSideBarOpen?"0px":"-230px"}`}}>
+    <div className='flex flex-col h-[calc(100vh-60px)] p-y-5 justify-between md:w-[230px] w-full mr-2.5 shadow-custom max-md:absolute max-md:left-[-430px] bg-white z-10 ' style={{left:`${props.isSideBarOpen?"0px":"-1030px"}`}}>
       <div className='flex flex-col gap-1.5'>
         <div className={`flex items-center gap-4 py-3 px-2.5 text-sm hover:bg-[lightgrey] cursor-pointer`} style={{background:`${activeTab=='Home'?'#eaf5ff':""}`}}  onClick={()=>handleNavigation('/home')}>
           <IconHomeFilled color={`${activeTab=='Home'?'#228BE6':""}`}    stroke={1.5}/>Home

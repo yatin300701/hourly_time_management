@@ -2,7 +2,7 @@
 export default function HabbitsService() {
    
 }
-export const getDailyHabbits =  (date:number) =>{
+export const getDailyHabbits =  (date:Date) =>{
     return  fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}daily-habbit?date=${date}`).then(res=>res.json());
 }
 export const postDailyHabbit =  (payload:any)=>{
@@ -11,7 +11,10 @@ export const postDailyHabbit =  (payload:any)=>{
       },body:JSON.stringify(payload)});
 }
 
-export const updateDailyHabbit = () =>{
+export const updateDailyHabbit = (payload:any) =>{
+    return fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}daily-habbit`,{method:"put", headers: {
+        'Content-Type': 'application/json'
+      },body:JSON.stringify(payload)});
     
 }
 export const deleteHabbit = (payload:any) =>{
