@@ -1,5 +1,5 @@
 "use client"
-import { Badge, Button, Card, Chip, Group, Input, LoadingOverlay, Modal, Text, TextInput, Textarea } from '@mantine/core'
+import { Badge, Button, Card, Chip, Group, Input, LoadingOverlay, Modal, Select, Table, Text, TextInput, Textarea } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, hasLength, useForm } from '@mantine/form';
@@ -18,27 +18,55 @@ interface HabitcardData{
   type: string;
 }
 
+
 export default function page() {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [openedEditModal, { open:openEditModal, close:closeEditModel }] = useDisclosure(false);
+  const [openedDelete,{open:openDeleteModel,close:closeDeleteModal}] = useDisclosure(false);
   const [date, setDate] = useState(new Date())
-  const [habitList,setHabitList] = useState([]);
+  const [habitList,setHabitList] = useState<any>([]);
+  const [habit,setHabit] = useState({});
+
+
 
   useEffect(()=>{
     getAllDailyHabits();
   },[])
 
   const closeHabitModal = () =>{
-    close();
+    closeEditModel();
   }
   const getAllDailyHabits = async () =>{
     try{
-      
-      let data = await getDailyHabbits(date);;
+      let data = await getDailyHabbits(date);
       setHabitList(data.data);
     }catch(err){
       console.log("err iss ", err)
     }
   }
+
+  const openEditHabit = (ele:any) =>{
+    setHabit(ele)
+    openEditModal();
+  }
+
+  const openDeleteHabit = (ele:any) =>{
+    setHabit(ele);
+    openDeleteModel();
+  }
+
+  const rows = habitList?.map((element:HabitcardData) => (
+    <Table.Tr key={element.accountId}>
+      <Table.Td>{element.name}</Table.Td>
+      <Table.Td>{element.status}</Table.Td>
+      <Table.Td>{element.type}</Table.Td>
+      <Table.Td>
+      <div className='flex gap-1 pr-[6px]'>
+                      <IconEdit className='w-[20px]' onClick={()=>openEditHabit(element)} />
+                      <IconTrash className='text-[red] w-[20px]' onClick={()=>openDeleteHabit(element)}/>
+       </div>
+      </Table.Td>
+    </Table.Tr>
+  ));
 
 
 
@@ -46,37 +74,53 @@ export default function page() {
     <div>
       <div className='flex justify-between items-center m-[14px]'>
         <div className='text-[18px] font-semibold'>Daily Habbits</div>
-        <div><Button variant="filled" onClick={open}>Add</Button></div>
+        <div><Button variant="filled" onClick={openEditModal}>Add</Button></div>
       </div>
-      <div className='m-[14px]'>
+      <div className='m-[14px] md:hidden'>
           <div>{moment(date).format("DD-MMM")}</div>
           <hr/>
           <div className='flex flex-col md:hidden'>
               {
-                React.Children.toArray(habitList.map((ele:any)=>{
+                React.Children.toArray(habitList.map((ele:HabitcardData)=>{
                 return <>
                    <HabitCard data={ele}  loadAllHabits={getAllDailyHabits}/>
                 </>}))
               }
           </div>
       </div>
+      <div className='hidden md:flex'>
+        <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Name</Table.Th>
+            <Table.Th>Status</Table.Th>
+            <Table.Th>Type</Table.Th>
+            <Table.Th>Buttons</Table.Th>
 
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+      </div>
 
-    <HabitModal opened={opened} close={()=>closeHabitModal()} loadAllHabits={getAllDailyHabits}/>
-      
+    <HabitModal data={habit} opened={openedEditModal} close={()=>closeHabitModal()} loadAllHabits={getAllDailyHabits}/>
+    <DeleteModel data={habit} opened={openedDelete} close={closeDeleteModal}  loadAllHabits={getAllDailyHabits}/>
     </div>
   )
 }
 
 
 
+
+
 function HabitModal(props:{data?:any,opened:boolean,close:()=>void,loadAllHabits:()=>{}}){
   const [visible, { toggle }] = useDisclosure(false);
+  console.log("data is ",props.data)
 
   const form = useForm({
     mode: 'controlled',
     initialValues: props.data == undefined ?  { name: '',description:'', type:'Today',date:'' }:
-    {name:props.data.name,description:props.data.description,type:props.data.type,date:props.data.date!=undefined ?  new Date(props.data.date*1000) : ""} ,
+    {name:props.data.name,description:props.data.description,type:props.data.type,date:props.data.date!=undefined ?  new Date(props.data.date*1000) : "",status:props.data.status} ,
     validate: {
       name: hasLength({ min: 1 }, 'Name is required field'),
       date:(value:any,values:any)=>{
@@ -86,22 +130,25 @@ function HabitModal(props:{data?:any,opened:boolean,close:()=>void,loadAllHabits
     },
   });
 
+  console.log("data os ", props.data)
+
   const addHabit= async (data:{
     name: string;
     description: string;
     type: string;
     date: string|Date;
+    status:string|undefined;
 })=>{
     try{
       toggle();
-      if(props.data!=undefined){
+      if(props.data?.name!=undefined){
         let payload = {
           accountId:props.data.accountId,
           name:data.name,
           description:data.description,
           type:data.type,
           date:data.date,
-          status:"In-Progress",
+          status:data.status,
           date__type:props.data.date__type,
           createdAt:props.data.createdAt
         }
@@ -109,7 +156,7 @@ function HabitModal(props:{data?:any,opened:boolean,close:()=>void,loadAllHabits
       }else{
         await  postDailyHabbit(data);
       }
-      props.loadAllHabits();
+      await props.loadAllHabits();
       toggle();
       form.reset();
      props.close();
@@ -123,7 +170,7 @@ function HabitModal(props:{data?:any,opened:boolean,close:()=>void,loadAllHabits
   return <>
   <Modal opened={props.opened} onClose={props.close} title="Add Habit" centered style={{position:"absolute"}}>
     <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-    <form onSubmit={form.onSubmit((data)=>addHabit(data))}>
+    <form onSubmit={form.onSubmit((data:any)=>addHabit(data))}>
         <TextInput placeholder="Type name" withAsterisk label="Name" {...form.getInputProps('name')} />
         <Textarea
         {...form.getInputProps('description')}
@@ -144,6 +191,15 @@ function HabitModal(props:{data?:any,opened:boolean,close:()=>void,loadAllHabits
           placeholder="Select date"
         />
         }
+        {
+          props.data?.name!=undefined ?  <Select
+          label="Status"
+          {...form.getInputProps('status')}
+          placeholder="Select status"
+          data={['To-Do', 'In-Progress', 'Done']}
+          searchable
+        /> : <></>
+        }
         <Group justify="center" grow mt="md">
           <Button type="submit">Submit</Button>
         </Group>
@@ -158,7 +214,6 @@ const DeleteModel = (props:{data?:any,opened:boolean,close:()=>void,loadAllHabit
   const deleteHabbitClicked = async (data:any) =>{
     try{
       toggle();
-      console.log("props", props)
       
       await deleteHabbit({date__type:props.data.date__type});
       await props.loadAllHabits();
@@ -180,6 +235,12 @@ const DeleteModel = (props:{data?:any,opened:boolean,close:()=>void,loadAllHabit
   </>
 }
 
+const TrackingModel = (props:{data:HabitcardData,opened:boolean,close:()=>void}) => {
+   return <><Modal opened={props.opened} onClose={props.close} title="Track Habit" centered style={{position:"absolute"}}>
+    Hello
+  </Modal></>
+}
+
 const HabitCard = (props:{data:{ date: number|number;
   accountId: string;
   status: string;
@@ -187,6 +248,7 @@ const HabitCard = (props:{data:{ date: number|number;
   createdAt: number;
   name: string;
   type: string;},loadAllHabits:()=>{}}) =>{
+    console.log("here",props.data);
   let tagColor:any = {
     'To-Do':'grey',
     'In-Progress':'blue',
@@ -194,8 +256,18 @@ const HabitCard = (props:{data:{ date: number|number;
   }
   const [openedEditModal, { open:openEditModal, close:closeEditModel }] = useDisclosure(false);
   const [openedDelete,{open:openDeleteModel,close:closeDeleteModal}] = useDisclosure(false);
+  const [openedTrakingModal,{open:openTrackingModel,close:closeTrackingModal}] = useDisclosure(false);
+
+  const editHabit =(event:Event)=>{
+    event.stopPropagation();
+    openEditModal();
+  }
+  const deletehabit = (event:Event) =>{
+    event.stopPropagation();
+    openDeleteModel();
+  }
 return <>
-  <Card shadow="sm" padding="lg" radius="12px" withBorder className='text-sm my-[10px] text-[#494949]'>
+  <Card shadow="sm" padding="lg" radius="12px" withBorder className='text-sm my-[10px] text-[#494949]' onClick={()=>openTrackingModel()}>
                   <div className='flex justify-between pb-[7px]'>
                     <Text className='text-base font-medium '>{props.data.name}</Text>
                     <Badge color={tagColor[props.data.status]}>{props.data.status}</Badge>
@@ -203,13 +275,13 @@ return <>
                   <div className='flex justify-between'>
                     <div className='text-[#696969]'>{props.data.type}</div>
                     <div className='flex gap-1 pr-[6px]'>
-                      <IconEdit className='w-[20px]' onClick={()=>openEditModal()} />
-                      <IconTrash className='text-[red] w-[20px]' onClick={openDeleteModel}/>
+                      <IconEdit className='w-[20px]' onClick={(e:any)=>editHabit(e)} />
+                      <IconTrash className='text-[red] w-[20px]' onClick={(e:any)=>deletehabit(e)}/>
                     </div>
                   </div>
     </Card>
     <HabitModal data={props.data} opened={openedEditModal} close={closeEditModel} loadAllHabits={props.loadAllHabits}/>
     <DeleteModel data={props.data} opened={openedDelete} close={closeDeleteModal}  loadAllHabits={props.loadAllHabits}/>
-
+    <TrackingModel data={props.data} opened={openedTrakingModal} close={closeTrackingModal}  />
   </>
 }
