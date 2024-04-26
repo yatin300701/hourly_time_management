@@ -26,7 +26,8 @@ dailyHabbit.post('/',async(req:Request,res:Response)=>{
     name:Joi.string().required(),
     description:Joi.string().empty(''),
     type:Joi.string().empty(''),
-    date:Joi.date().iso().allow(null,'').optional() 
+    date:Joi.date().iso().allow(null,'').optional(),
+    status:Joi.string().allow(null,'').optional(), 
   })
 
   try{
