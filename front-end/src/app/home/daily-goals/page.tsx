@@ -208,38 +208,6 @@ function HabitModal(props:{data?:any,opened:boolean,close:()=>void,loadAllHabits
       </Modal></>
 }
 
-const DeleteModel = (props:{data?:any,opened:boolean,close:()=>void,loadAllHabits:()=>{}}) =>{
-  const [visible, { toggle }] = useDisclosure(false);
-
-  const deleteHabbitClicked = async (data:any) =>{
-    try{
-      toggle();
-      
-      await deleteHabbit({date__type:props.data.date__type});
-      await props.loadAllHabits();
-      toggle();
-      props.close();
-    }catch(err){
-      toggle()
-      console.log(err);
-    }
-  
-  }
-  return <>
-   <Modal opened={props.opened} onClose={props.close} title="Delete Habbit" centered style={{position:"absolute"}}>
-      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-      <Group justify="center" grow mt="md">
-          <Button type="submit" color="red" onClick={()=>deleteHabbitClicked(props.data)}>Submit</Button>
-      </Group>
-  </Modal>
-  </>
-}
-
-const TrackingModel = (props:{data:HabitcardData,opened:boolean,close:()=>void}) => {
-   return <><Modal opened={props.opened} onClose={props.close} title="Track Habit" centered style={{position:"absolute"}}>
-    Hello
-  </Modal></>
-}
 
 const HabitCard = (props:{data:{ date: number|number;
   accountId: string;
@@ -285,3 +253,37 @@ return <>
     <TrackingModel data={props.data} opened={openedTrakingModal} close={closeTrackingModal}  />
   </>
 }
+
+const DeleteModel = (props:{data?:any,opened:boolean,close:()=>void,loadAllHabits:()=>{}}) =>{
+  const [visible, { toggle }] = useDisclosure(false);
+
+  const deleteHabbitClicked = async (data:any) =>{
+    try{
+      toggle();
+      
+      await deleteHabbit({date__type:props.data.date__type});
+      await props.loadAllHabits();
+      toggle();
+      props.close();
+    }catch(err){
+      toggle()
+      console.log(err);
+    }
+  
+  }
+  return <>
+   <Modal opened={props.opened} onClose={props.close} title="Delete Habbit" centered style={{position:"absolute"}}>
+      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      <Group justify="center" grow mt="md">
+          <Button type="submit" color="red" onClick={()=>deleteHabbitClicked(props.data)}>Submit</Button>
+      </Group>
+  </Modal>
+  </>
+}
+
+const TrackingModel = (props:{data:HabitcardData,opened:boolean,close:()=>void}) => {
+   return <><Modal opened={props.opened} onClose={props.close} title="Track Habit" centered style={{position:"absolute"}}>
+    Hello
+  </Modal></>
+}
+
